@@ -19,9 +19,13 @@ if (firebase.app.length) {
 
 // Routes Import
 const indexRoute = require("./routes/index.js");
+const userRoute = require("./routes/user.js");
+const roomRoute = require("./routes/room.js");
 
 // Routes
 app.use("/", indexRoute);
+app.use("/user", userRoute);
+app.use("/room", roomRoute);
 
 app.listen(port, () => {
   console.log("Jack's Dynamic Web Application Final is running!");
