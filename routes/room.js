@@ -92,10 +92,9 @@ router.get("/retrieveSingle", (req, res) => {
     .then((doc) => {
       if (doc.exists) {
         const response = doc.data();
-        console.log(response);
         return res.send({
           status: constants.SUCCESS,
-          ...response,
+          response: response,
         });
       } else {
         return res.send({
