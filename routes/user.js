@@ -61,7 +61,7 @@ router.get("/retrieve", (req, res) => {
         const response = doc.data();
         return res.send({
           status: constants.SUCCESS,
-          response: response,
+          ...response,
         });
       } else {
         return res.send({

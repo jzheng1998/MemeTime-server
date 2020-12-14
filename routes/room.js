@@ -63,7 +63,7 @@ router.get("/retrieve", (req, res) => {
         console.log(response);
         return res.send({
           status: constants.SUCCESS,
-          response: response,
+          ...response,
         });
       } else {
         return res.send({
