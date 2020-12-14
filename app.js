@@ -22,6 +22,15 @@ const indexRoute = require("./routes/index.js");
 const userRoute = require("./routes/user.js");
 const roomRoute = require("./routes/room.js");
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 // Routes
 app.use("/", indexRoute);
 app.use("/user", userRoute);
