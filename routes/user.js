@@ -5,6 +5,7 @@ const router = express.Router();
 const firebase = require("firebase");
 const database = firebase.firestore();
 const users = database.collection("users");
+const rooms = database.collection("rooms");
 
 router.get("/", (req, res) =>
   res.send({
@@ -89,10 +90,11 @@ router.get("/addRoom", (req, res) => {
     });
   }
 
+  const roomRef = rooms.doc(roomId);
   users
     .doc(userId)
     .update({
-      rooms: firebase.firestore.FieldValue.arrayUnion(roomId),
+      rooms: firebase.firestore.FieldValue.arrayUnion(roomRef),
     })
     .then(() => {
       return res.send({
