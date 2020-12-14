@@ -4,6 +4,7 @@ const router = express.Router();
 
 const firebase = require("firebase");
 const database = firebase.firestore();
+const users = database.collection("users");
 const rooms = database.collection("rooms");
 
 router.get("/", (req, res) =>
@@ -44,10 +45,41 @@ router.get("/create", (req, res) => {
     });
 });
 
-router.get("/retrieve", (req, res) => {
+router.get("/retrieveMultiple", (req, res) => {
+  const inputRooms = req.query.inputRooms;
+
+  if (!inputRooms || inputRooms.length === 0) {
+    return res.send({
+      status: constants.ERROR,
+      errorMsg: "No rooms.",
+    });
+  }
+
+  rooms
+    .where(firebase.firestore.FieldPath.documentId(), "in", inputRooms)
+    .get()
+    .then((querySnapshot) => {
+      const userRooms = [];
+      querySnapshot.forEach((doc) => {
+        userRooms.push(doc.data());
+      });
+      return res.send({
+        status: constants.SUCCESS,
+        userRooms: userRooms,
+      });
+    })
+    .catch((error) => {
+      return res.send({
+        status: constants.ERROR,
+        errorMsg: error,
+      });
+    });
+});
+
+router.get("/retrieveSingle", (req, res) => {
   const roomId = req.query.roomId;
 
-  if (!userId) {
+  if (!roomId) {
     return res.send({
       status: constants.ERROR,
       errorMsg: "Room ID not provided.",

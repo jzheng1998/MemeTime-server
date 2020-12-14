@@ -90,11 +90,10 @@ router.get("/addRoom", (req, res) => {
     });
   }
 
-  const roomRef = rooms.doc(roomId);
   users
     .doc(userId)
     .update({
-      rooms: firebase.firestore.FieldValue.arrayUnion(roomRef),
+      rooms: firebase.firestore.FieldValue.arrayUnion(roomId),
     })
     .then(() => {
       return res.send({
