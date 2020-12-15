@@ -108,6 +108,35 @@ router.get("/addRoom", (req, res) => {
     });
 });
 
+router.get("/removeRoom", (req, res) => {
+  const userId = req.query.userId;
+  const roomId = req.query.roomId;
+
+  if (!userId || !roomId) {
+    return res.send({
+      status: constants.ERROR,
+      errorMsg: "User ID or Room ID not provided.",
+    });
+  }
+
+  users
+    .doc(userId)
+    .update({
+      rooms: firebase.firestore.FieldValue.arrayRemove(roomId),
+    })
+    .then(() => {
+      return res.send({
+        status: constants.SUCCESS,
+      });
+    })
+    .catch((error) => {
+      return res.send({
+        status: constants.ERROR,
+        errorMsg: error,
+      });
+    });
+});
+
 router.get("/addPost", (req, res) => {
   const userId = req.query.userId;
   const postId = req.query.postId;
