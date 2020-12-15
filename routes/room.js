@@ -170,7 +170,7 @@ router.get("/getPost", (req, res) => {
   }
 
   posts
-    .doc(docId)
+    .doc(postId)
     .get()
     .then((doc) => {
       if (doc.exists) {
