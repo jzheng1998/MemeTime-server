@@ -5,7 +5,6 @@ const router = express.Router();
 const firebase = require("firebase");
 const database = firebase.firestore();
 const users = database.collection("users");
-const rooms = database.collection("rooms");
 
 router.get("/", (req, res) =>
   res.send({
