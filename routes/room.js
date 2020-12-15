@@ -4,8 +4,8 @@ const router = express.Router();
 
 const firebase = require("firebase");
 const database = firebase.firestore();
-const users = database.collection("users");
 const rooms = database.collection("rooms");
+const posts = database.collection("posts");
 
 router.get("/", (req, res) =>
   res.send({
@@ -112,6 +112,7 @@ router.get("/retrieveSingle", (req, res) => {
 });
 
 router.get("/addPost", (req, res) => {
+  const username = req.query.username;
   const roomId = req.query.roomId;
   const postId = req.query.postId;
 
@@ -122,15 +123,68 @@ router.get("/addPost", (req, res) => {
     });
   }
 
-  rooms
-    .doc(roomId)
-    .update({
-      posts: firebase.firestore.FieldValue.arrayUnion(postId),
-    })
+  const template = {
+    postId: postId,
+    createAt: firebase.firestore.FieldValue.serverTimestamp(),
+    createBy: username,
+    likes: 0,
+  };
+
+  posts
+    .doc(postId)
+    .set(template)
     .then(() => {
+      rooms
+        .doc(roomId)
+        .update({
+          posts: firebase.firestore.FieldValue.arrayUnion(postId),
+        })
+        .then(() => {
+          return res.send({
+            status: constants.SUCCESS,
+          });
+        })
+        .catch((error) => {
+          return res.send({
+            status: constants.ERROR,
+            errorMsg: error,
+          });
+        });
+    })
+    .catch((error) => {
       return res.send({
-        status: constants.SUCCESS,
+        status: constants.ERROR,
+        errorMsg: error,
       });
+    });
+});
+
+router.get("/getPost", (req, res) => {
+  const postId = req.query.postId;
+
+  if (!postId) {
+    return res.send({
+      status: constants.ERROR,
+      errorMsg: "Post ID not provided.",
+    });
+  }
+
+  posts
+    .doc(docId)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const response = doc.data();
+        return res.send({
+          status: constants.SUCCESS,
+          response: response,
+        });
+      } else {
+        return res.send({
+          status: constants.ERROR_NO_DOCUMENT,
+          errorMsg: "No document with the provided ID exists.",
+        });
+      }
     })
     .catch((error) => {
       return res.send({
